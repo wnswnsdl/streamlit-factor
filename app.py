@@ -1,32 +1,24 @@
 import streamlit as st
 import sympy as sp
-import re
 
-st.title("🧮 인수분해 계산기")
+st.title("인수분해 계산기")
 
-# 사용자가 입력한 수식을 자동으로 수정하는 함수
-def fix_input(expr):
-    expr = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', expr)  # 2x → 2*x
-    expr = expr.replace("^", "**")                    # x^2 → x**2
-    return expr
-
-# 수식 입력
-expr_input = st.text_input("다항식을 입력하세요 (예: x^2 + 2x + 1):")
+expr_input = st.text_input("다항식을 입력하세요 (예: x**2 + 2*x + 1):")
 
 if expr_input:
     try:
-        # 입력값 자동 수정
-        fixed_expr = fix_input(expr_input)
-        
-        # 수식을 sympy로 변환
-        expr = sp.sympify(fixed_expr)
+        # 문자열을 수식으로 변환
+        expr = sp.sympify(expr_input)
 
-        # 인수분해
+        # 인수분해 수행
         factors = sp.factor(expr)
 
-        # 결과 출력
-        st.markdown(f"### 📌 해석된 수식:\n`{expr}`")
-        st.markdown(f"### ✅ 인수분해 결과:\n`{factors}`")
-    
+        # LaTeX 형식으로 변환
+        expr_latex = sp.latex(expr)
+        factors_latex = sp.latex(factors)
+
+        # 원래 수식과 인수분해 결과를 LaTeX로 출력
+        st.latex(f"{expr_latex} = {factors_latex}")
+
     except Exception as e:
         st.error(f"오류 발생: {e}")
